@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <numeric>
 #include <chrono>
+#include "Matrix.h"
 
 // Global variables
 double E;
@@ -314,7 +315,15 @@ int readFile(std::string filename) // Reads the inlet file
 		}
 		std::cout << std::endl;
 	}
-	double Wee[3][3];
+	Matrix Wee(3,3);/*
+	for (int i = 0; i < 3; i++) // Node data
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			std::cout << Wee(i, j) << " ";
+		}
+		std::cout << std::endl;
+	}*/
 	//matadd(Dee[3][3], Dee[3][3], Wee[3][3]);
 	return 0;
 }
