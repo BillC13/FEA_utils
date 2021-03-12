@@ -1,0 +1,27 @@
+#---------------------MATERIAL DATA
+1                  #1 for plane stress or 2 for plane strain
+30000000           #Young's Modulus
+0.3                #Poisson Ratio
+0.1                #Material Density
+1                  #Thickness (Leave as 1 if it is a plane strain Analysis)
+0                  #Acceleration X
+-9.81              #Acceleration Y
+6                  #number of nodes
+2                  #number of elements
+2                  #number of BC's applied
+1                  #number of Loads Applied
+#---------------------NODE DATA
+1,1,0
+2,2,0
+3,2.25,1.5
+4,1.25,1
+5,3,0
+6,3,1.5
+#---------------------ELEMENT DATA
+1,1,2,3,4
+2,2,5,6,3
+#---------------------BC, 1-Fixed or 0-Free
+1,1,1
+2,0,1
+#---------------------LOAD AND BC
+4,0,10
