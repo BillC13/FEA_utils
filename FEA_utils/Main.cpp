@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <numeric>
 #include <chrono>
-#include "Matrix.h"
 
 // Global variables
 double E;
@@ -22,7 +21,8 @@ int NDOF;
 int NDOFN;
 double** NDat;
 double** EDat;
-double Dee[3][3];
+double** Dee;
+double** Wee;
 double** KG;
 double** MMat;
 double** PVres;
@@ -68,11 +68,11 @@ void split(std::string strToSplit, char delimeter, double temp[]) // Inlet file 
 		i++;
 	}
 }
-void getDee(double type, double Dee[3][3]) // D matrix
+void getDee(double type) // D matrix
 {
 	if (type == 1)
 	{
-		Dee[0][0] = E / (1 - pow(Pn, 2));
+		Dee[0][0] =  E / (1 - pow(Pn, 2));
 		Dee[0][1] = Pn * E / (1 - pow(Pn, 2));
 		Dee[0][2] = 0;
 		Dee[1][0] = Pn * E / (1 - pow(Pn, 2));
@@ -93,6 +93,54 @@ void getDee(double type, double Dee[3][3]) // D matrix
 		Dee[2][0] = 0;
 		Dee[2][1] = 0;
 		Dee[2][2] = E * ((1 - 2 * Pn) / 2) / ((1 + Pn) * (1 - 2 * Pn));
+	}
+//	double jeff = Dee(1, 1);
+}
+
+void matadd(double **mat1, double **mat2, double **result, int a, int b) // matrix addition
+{
+	for (int i = 0; i < a; i++)
+	{
+		for (int j = 0; j < b; j++)
+		{
+			result[i][j] = mat1[i][j] + mat2[i][j];
+		}
+	}
+}
+
+void mattim(double** mat1, double** result, int a, int b, double c) // matrix addition
+{
+	for (int i = 0; i < a; i++)
+	{
+		for (int j = 0; j < b; j++)
+		{
+			result[i][j] = mat1[i][j] * c;
+		}
+	}
+}
+
+void matmul(double** mat1, double** mat2, double** result, int a, int b, int c) // matrix addition
+{
+	for (int i = 0; i < a; i++)
+	{
+		for (int j = 0; j < c; j++)
+		{
+			for (int k = 0; k < b; k++)
+			{
+				result[i][j] += mat1[i][k] * mat2[k][j];
+			}
+		}
+	}
+}
+
+void trans(double** mat, double** result, int a, int b) // matrix transposition
+{
+	for (int i = 0; i < a; i++)
+	{
+		for (int j = 0; j < b; j++)
+		{
+			result[i][j] = mat[j][i];
+		}
 	}
 }
 
@@ -269,17 +317,13 @@ int readFile(std::string filename) // Reads the inlet file
 	t0[1][0] = s1;
 	t0[1][1] = s1;
 
-	double Dee[3][3];
-	getDee(type, Dee);
-
-	for (int i = 0; i < 3; i++) // Node data
+	Dee = (double**)malloc(3 * sizeof(double*));
+	for (int i = 0; i < 3; i++)
 	{
-		for (int j = 0; j < 3; j++)
-		{
-			std::cout << Dee[i][j] << " ";
-		}
-		std::cout << std::endl;
+		Dee[i] = (double*)malloc(3 * sizeof(double));
 	}
+
+	getDee(type);
 
 	KG = (double**)malloc(NDOF * sizeof(double*));
 	for (int i = 0; i < NDOF; i++)
@@ -299,32 +343,6 @@ int readFile(std::string filename) // Reads the inlet file
 			MMat[i][j] = 0;
 		}
 	}
-	for (int i = 0; i < NDOF; i++) // Node data
-	{
-		for (int j = 0; j < NDOF; j++)
-		{
-			std::cout << KG[i][j] << " ";
-		}
-		std::cout << std::endl;
-	}
-	for (int i = 0; i < NDOF; i++) // Node data
-	{
-		for (int j = 0; j < NDOF; j++)
-		{
-			std::cout << MMat[i][j] << " ";
-		}
-		std::cout << std::endl;
-	}
-	Matrix Wee(3,3);/*
-	for (int i = 0; i < 3; i++) // Node data
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			std::cout << Wee(i, j) << " ";
-		}
-		std::cout << std::endl;
-	}*/
-	//matadd(Dee[3][3], Dee[3][3], Wee[3][3]);
 	return 0;
 }
 
